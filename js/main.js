@@ -18,12 +18,9 @@ function randomRGB() {
   return `rgb(${random(0, 255)},${random(0, 255)},${random(0, 255)})`;
 }
 
-class Ball {
-  constructor(x, y, velX, velY, color, size, exists) {
-    this.x = x;
-    this.y = y;
-    this.velX = velX;
-    this.velY = velY;
+class Ball extends Shape {
+  constructor(x, y, velX, velY, color, size) {
+    super(x, y, velX, velY);
     this.color = color;
     this.size = size;
     this.exists = true;
@@ -90,11 +87,11 @@ while (balls.length < 25) {
   balls.push(ball);
 }
 
-
+// Animation loop
 function loop() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
   ctx.fillRect(0, 0, width, height);
-
+  
   for (const ball of balls) {
     if (ball.exists) {
       ball.draw();
@@ -102,7 +99,11 @@ function loop() {
       ball.collisionDetect();
     }
   }
-
+  
+  evilCircle.draw();
+  evilCircle.checkBounds();
+  evilCircle.collisionDetect();
+  
   requestAnimationFrame(loop);
 }
 
@@ -112,7 +113,9 @@ loop();
 
 class Shape extends Ball {
   constructor(x, y, velX, velY, color, size) {
-    super(x, y, velX, velY,size, color, true);  
+    super(x, y, velX, velY);
+    this.size = size;
+    this.color = color;
   }
 }
 
@@ -121,8 +124,8 @@ class Shape extends Ball {
 class EvilCircle extends Shape {
   constructor(x, y) {
     super(x, y, 20, 20, 'white' , 10);
-    this.color = 'white';
-    this.size = 10;
+    color = 'white';
+    size = 10;
 
     window.addEventListener("keydown", (e) => {
       switch (e.key) {
@@ -145,9 +148,10 @@ class EvilCircle extends Shape {
 
     draw() {
       ctx.beginPath();
-      ctx.lineWidth = 3;
+      lineWidth = 3;
       ctx.strokeStyle = this.color;
       ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+      
       ctx.stroke();
       
     }
@@ -177,18 +181,18 @@ class EvilCircle extends Shape {
           const dx = this.x - ball.x;
           const dy = this.y - ball.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-  
           if (distance < this.size + ball.size) {
             ball.exists = false;
           }
         }
       }
     }
-  }
 
-  const evilCircle = new EvilCircle(
-    random(0 + 20, width - 20),
-    random(0 + 20, height - 20)
-  );
+}
 
+// Create evil circle
+const evilCircle = new EvilCircle(
+  random(0 + 20, width - 20),
+  random(0 + 20, height - 20)
+);
 
