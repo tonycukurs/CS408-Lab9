@@ -26,7 +26,7 @@ class Ball {
     this.velY = velY;
     this.color = color;
     this.size = size;
-    exists = true;
+    this.exists = true;
   }
 
   draw() {
@@ -90,14 +90,17 @@ while (balls.length < 25) {
   balls.push(ball);
 }
 
+
 function loop() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
   ctx.fillRect(0, 0, width, height);
 
   for (const ball of balls) {
-    ball.draw();
-    ball.update();
-    ball.collisionDetect();
+    if (ball.exists) {
+      ball.draw();
+      ball.update();
+      ball.collisionDetect();
+    }
   }
 
   requestAnimationFrame(loop);
@@ -109,9 +112,7 @@ loop();
 
 class Shape extends Ball {
   constructor(x, y, velX, velY, color, size) {
-    super(x, y, velX, velY);
-    this.size = size;
-    this.color = color;
+    super(x, y, velX, velY,size, color, true);  
   }
 }
 
@@ -120,8 +121,8 @@ class Shape extends Ball {
 class EvilCircle extends Shape {
   constructor(x, y) {
     super(x, y, 20, 20, 'white' , 10);
-    color = 'white';
-    size = 10;
+    this.color = 'white';
+    this.size = 10;
 
     window.addEventListener("keydown", (e) => {
       switch (e.key) {
@@ -140,5 +141,54 @@ class EvilCircle extends Shape {
       }
     });
     }
-}
+
+
+    draw() {
+      ctx.beginPath();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = this.color;
+      ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+      ctx.stroke();
+      
+    }
+
+    checkBounds() {
+      if (this.x + this.size >= width) {
+        this.x = width - this.size
+      }
+  
+      if (this.x - this.size <= 0) {
+        this.x = this.size;
+      }
+  
+      if (this.y + this.size >= height) {
+        this.y = height - this.size;
+      }
+  
+      if (this.y - this.size <= 0) {
+        this.y = this.size;
+      }
+  
+    }
+
+    collisionDetect() {
+      for (const ball of balls) {
+        if (ball.exists) {
+          const dx = this.x - ball.x;
+          const dy = this.y - ball.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+  
+          if (distance < this.size + ball.size) {
+            ball.exists = false;
+          }
+        }
+      }
+    }
+  }
+
+  const evilCircle = new EvilCircle(
+    random(0 + 20, width - 20),
+    random(0 + 20, height - 20)
+  );
+
 
