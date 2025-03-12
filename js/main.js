@@ -19,13 +19,14 @@ function randomRGB() {
 }
 
 class Ball {
-  constructor(x, y, velX, velY, color, size) {
+  constructor(x, y, velX, velY, color, size, exists) {
     this.x = x;
     this.y = y;
     this.velX = velX;
     this.velY = velY;
     this.color = color;
     this.size = size;
+    exists = true;
   }
 
   draw() {
@@ -58,7 +59,7 @@ class Ball {
 
   collisionDetect() {
     for (const ball of balls) {
-      if (!(this === ball)) {
+      if (!(this === ball) && ball.exists) {
         const dx = this.x - ball.x;
         const dy = this.y - ball.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -103,3 +104,18 @@ function loop() {
 }
 
 loop();
+
+//Added class code for shapes
+
+class Shape extends Ball {
+  constructor(x, y, velX, velY, color, size) {
+    super(x, y, velX, velY);
+    this.size = size;
+    this.color = color;
+  }
+
+
+
+
+
+}
